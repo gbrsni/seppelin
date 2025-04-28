@@ -43,7 +43,7 @@ jobs:
         REGISTRY_PASSWORD: ${{ github.token }}
       with:
         registry: ${{ env.IMAGE_REGISTRY }}
-        image: ${{ seppelin }}
-        tags: ${{ latest }}
+        image: seppelin
+        tags: latest
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
