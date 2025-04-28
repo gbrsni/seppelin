@@ -1,0 +1,49 @@
+name: Build docker image
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu:24.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Buildah Build
+      uses: redhat-actions/buildah-build@v2.13
+      with:
+        image: seppelin
+        tags: latest
+        containerfiles: ./Dockerfile
+        oci: false
+        arch: amd64
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3.4.0
+      if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push To GHCR
+      uses: redhat-actions/push-to-registry@v2.8
+      if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+      id: push
+      env:
+        REGISTRY_USER: ${{ github.actor }}
+        REGISTRY_PASSWORD: ${{ github.token }}
+      with:
+        registry: ${{ env.IMAGE_REGISTRY }}
+        image: ${{ seppelin }}
+        tags: ${{ latest }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
