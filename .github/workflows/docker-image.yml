@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 
 env:
+    IMAGE_NAME: seppelin
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
@@ -24,8 +25,8 @@ jobs:
     - name: Buildah Build
       uses: redhat-actions/buildah-build@v2.13
       with:
-        image: seppelin
-        tags: latest
+        image: ${{ env.IMAGE_NAME }}
+        tags: ${{ env.IMAGE_TAGS }}
         containerfiles: ./Dockerfile
         oci: false
         arch: amd64
@@ -47,7 +48,7 @@ jobs:
         REGISTRY_PASSWORD: ${{ github.token }}
       with:
         registry: ${{ env.IMAGE_REGISTRY }}
-        image: seppelin
-        tags: latest
+        image: ${{ env.IMAGE_NAME }}
+        tags: ${{ env.IMAGE_TAGS }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
