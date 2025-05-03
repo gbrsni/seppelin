@@ -23,3 +23,6 @@ FROM apache/zeppelin:0.12.0
 COPY --from=downloader /opt/spark /opt/spark
 
 ENV SPARK_HOME="/opt/spark/"
+
+ENV PYSPARK_PYTHON=python3
+ENV PYSPARK_DRIVER_PYTHON=python3
